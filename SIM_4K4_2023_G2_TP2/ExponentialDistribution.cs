@@ -17,6 +17,7 @@ namespace SIM_4K4_2023_G2_TP2
         private double[] _randomValues;
         private (double LI, double LS, double FE, double FO)[] _intervalsValues;
         private int _n;
+        private double _lamba;
         public ExponentialDistribution()
         {
             InitializeComponent();
@@ -27,50 +28,124 @@ namespace SIM_4K4_2023_G2_TP2
             //Generador de la dataTable
             var _dt_gridUniformDistr = new DataTable();
             _dt_gridUniformDistr.Columns.Add("n");
+            _dt_gridUniformDistr.Columns.Add("RND");
             _dt_gridUniformDistr.Columns.Add("EXP()");
             return _dt_gridUniformDistr;
         }
-        private void generateListUniformDistr()
+        private void generateListExpDistr()
         {
             dt_gridExpDistr.VirtualMode = true;
 
             Cursor.Current = Cursors.WaitCursor;
 
-            double lamba;
+            if (radiobtn_lamba.Checked)
+                _lamba = double.Parse(txt_lm.Text, CultureInfo.InvariantCulture);
+            else
+                _lamba = 1 / double.Parse(txt_lm.Text, CultureInfo.InvariantCulture);
 
-            //if(radiobtn_lamba.Checked)
+
+            _n = int.Parse(txt_n.Text, CultureInfo.InvariantCulture);
+
+            _randomValues = new double[_n];
+
+            var _dt_gridExpDistr = generateDataTable();
+
+            for (int i = 0; i < _n; i++)
+            {
+                //Barra de progreso 
+                progressBar.Value = (int)(100 / double.Parse(_n.ToString()) * (i + 1));
+
+                //Calculo numero random
+                double _rnd = DoubleUtils.TruncateNumber(DoubleUtils.RandomNumber());
+                //Formula de la distribucion uniforme
+                double _value = DoubleUtils.TruncateNumber(-Math.Log(1 - _rnd) / _lamba);
+
+                //Agrego a la lista o tabla para mostrar
+                _dt_gridExpDistr.Rows.Add(i + 1, _rnd, _value);
+
+                //Lo guardo en un array o lista
+                _randomValues[i] = _value;
+            }
+
+            dt_gridExpDistr.DataSource = _dt_gridExpDistr;
+            progressBar.Value = 100;
+            generateInterval();
+            Cursor.Current = Cursors.Default;
+        }
+
+        // Genera un array de tuplas de intervalos min y max
+        private void generateInterval()
+        {
+            int _cIntervals = int.Parse(cmb_interval.SelectedItem.ToString());
+
+            //Genero un array de tuplas LI, LS, FE, FO
+            (double LI, double LS, double FE, double FO)[] _dtIntervals = new (double LI, double LS, double FE, double FO)[_cIntervals];
+
+            //Obtengo minimo y maximo
+            double min = _randomValues.Min();
+            double max = _randomValues.Max();
+
+            //Calculo la amplitud
+            double amplitude = (max - min) / _cIntervals;
 
 
-            //double _upper = double.Parse(tx.Text, CultureInfo.InvariantCulture);
-            //double _lower = double.Parse(txt_lower.Text, CultureInfo.InvariantCulture);
-            //_n = int.Parse(txt_n.Text, CultureInfo.InvariantCulture);
+            // Creación de los límites inferiores y superiores de los intervalos
+            for (int i = 0; i < _cIntervals; i++)
+            {
+                double _max;
+                double _min;
 
-            //_randomValues = new double[_n];
+                if (i == 0)
+                {
+                    // Si es el primer intervalo, suma el minimo + ancho de los intervalos.
+                    _max = DoubleUtils.TruncateNumber(min + amplitude);
+                    _min = min;
+                }
+                else if (i == (_cIntervals - 1))
+                {
+                    // Seteo el maximo y el anterior intervalo obtengo el limite superior
+                    _min = DoubleUtils.TruncateNumber(_dtIntervals[i - 1].LS + 0.0001d);
+                    _max = max + 0.0001d;
+                }
+                else
+                {
+                    // Si es cualquier otro intervalo, suma el max anterior + ancho de los intervalos + 0.0001 (Para ajustar y tomar todos los valores).
+                    _min = DoubleUtils.TruncateNumber(_dtIntervals[i - 1].LS + 0.0001d);
+                    _max = DoubleUtils.TruncateNumber(_min + amplitude + 0.0001d);
+                }
+                //Calculo la frecuencia
+                double frecuency = DoubleUtils.TruncateNumber((1 - (Math.Exp(-_lamba*_max)) - (1 - (Math.Exp(-_lamba * min)))) * _n);
+                //Defino las tuplas
+                _dtIntervals[i] = (LI: _min, LS: _max, FE: frecuency, FO: 0);
+            }
 
-            //var _dt_gridUniformDistr = generateDataTable();
+            //Calculo las freecuencias observadas para cada intervalo dependiendo los valores generados
+            for (int j = 0; j < _n; j++)
+            {
+                for (int i = 0; i < _cIntervals; i++)
+                {
+                    if (_randomValues[j] >= _dtIntervals[i].LI && _randomValues[j] < _dtIntervals[i].LS)
+                    {
+                        _dtIntervals[i].FO += 1;
+                    }
+                }
+            }
 
-            //for (int i = 0; i < _n; i++)
-            //{
-            //    //Barra de progreso 
-            //    progressBar.Value = (int)(100 / double.Parse(_n.ToString()) * (i + 1));
+            _intervalsValues = _dtIntervals;
+            //Generador de la dataTable
+            var _dt_gridData = new DataTable();
+            _dt_gridData.Columns.Add("LI");
+            _dt_gridData.Columns.Add("LS");
+            //_dt_gridData.Columns.Add("FE");
+            _dt_gridData.Columns.Add("FO");
 
-            //    //Calculo numero random
-            //    double _rnd = DoubleUtils.TruncateNumber(DoubleUtils.RandomNumber());
+            //Seteo la vista de la tabla
+            foreach (var data in _dtIntervals)
+            {
+                _dt_gridData.Rows.Add(data.LI, data.LS, /*data.FE,*/ data.FO);
+            }
 
-            //    //Formula de la distribucion uniforme
-            //    double _value = DoubleUtils.TruncateNumber(_lower + _rnd * (_upper - _lower));
-
-            //    //Agrego a la lista o tabla para mostrar
-            //    _dt_gridUniformDistr.Rows.Add(i + 1, _rnd, _value);
-
-            //    //Lo guardo en un array o lista
-            //    _randomValues[i] = _value;
-            //}
-
-            //dt_gridUniformDistr.DataSource = _dt_gridUniformDistr;
-            //progressBar.Value = 100;
-            //generateInterval();
-            //Cursor.Current = Cursors.Default;
+            dt_gridData.DataSource = _dt_gridData;
         }
         //Restriccion de solo numeros a los textBox
         private void textBox_KeyPress(object sender, KeyPressEventArgs e)
@@ -154,5 +229,23 @@ namespace SIM_4K4_2023_G2_TP2
             }
         }
         #endregion
+
+        private void btn_generationU_Click(object sender, EventArgs e)
+        {
+
+            if (ValidateChildren(ValidationConstraints.Enabled))
+            {
+                generateListExpDistr();
+            }
+        }
+
+        private void btn_draw_Click(object sender, EventArgs e)
+        {
+
+            Histogram _formHistogram = new Histogram(_intervalsValues);
+            //_formHistogram.intervalos_seleccionado = intervalos_seleccionado;
+            //formHistograma.serie_generada = serie_generada;
+            _formHistogram.Show();
+        }
     }
 }

@@ -133,6 +133,7 @@
             btn_generationU.TabIndex = 17;
             btn_generationU.Text = "Generar";
             btn_generationU.UseVisualStyleBackColor = true;
+            btn_generationU.Click += btn_generationU_Click;
             // 
             // dt_gridExpDistr
             // 
@@ -165,6 +166,7 @@
             btn_draw.TabIndex = 21;
             btn_draw.Text = "Graficar";
             btn_draw.UseVisualStyleBackColor = true;
+            btn_draw.Click += btn_draw_Click;
             // 
             // dt_gridData
             // 
