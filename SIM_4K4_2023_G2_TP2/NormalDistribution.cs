@@ -93,6 +93,8 @@ namespace SIM_4K4_2023_G2_TP2
         private void generateInterval()
         {
             int _cIntervals = int.Parse(cmb_interval.SelectedItem.ToString());
+            double media_datos_generados = mediaMuestraGenerada();
+            double desv_datos_generados = desvMuestraGenerada(media_datos_generados);
 
             //Genero un array de tuplas LI, LS, FE, FO
             (double LI, double LS, double FE, double FO)[] _dtIntervals = new (double LI, double LS, double FE, double FO)[_cIntervals];
@@ -129,11 +131,11 @@ namespace SIM_4K4_2023_G2_TP2
                     _min = DoubleUtils.TruncateNumber(_dtIntervals[i - 1].LS + 0.0001d);
                     _max = DoubleUtils.TruncateNumber(_min + amplitude + 0.0001d);
                 }
-                //Calculo la frecuencia
+                
+                //Calculo la frecuencia esperada
                 double marca_clase = (_max + _min) / 2;
-
-                double frecuency = DoubleUtils.TruncateNumber((Math.Pow(Math.E, -0.5 * Math.Pow((marca_clase - _media) / _desv, 2)) / (_desv * Math.Sqrt(2 * Math.PI)))* _n );
-
+                double frecuency = DoubleUtils.TruncateNumber((Math.Pow(Math.E, -0.5 * Math.Pow((marca_clase - media_datos_generados) / desv_datos_generados, 2)) / (_desv * Math.Sqrt(2 * Math.PI))) * _n);
+                
                 //Defino las tuplas
                 _dtIntervals[i] = (LI: _min, LS: _max, FE: frecuency, FO: 0);
             }
@@ -166,7 +168,34 @@ namespace SIM_4K4_2023_G2_TP2
 
             dt_gridData.DataSource = _dt_gridData;
         }
+        private double mediaMuestraGenerada()
+        {
+            double sumatoria = 0;
 
+            for (int i = 0; i < _randomValues.Length; i++)
+            {
+                sumatoria += _randomValues[i];
+            }
+
+            double nueva_media = sumatoria / _randomValues.Length;
+
+            return nueva_media;
+        }
+
+        private double desvMuestraGenerada(double media)
+        {
+            double nueva_desv = 0;
+            double acDesviacion = 0;
+
+            for (int i = 0; i < _randomValues.Length; i++)
+            {
+                acDesviacion += Math.Pow((_randomValues[i] - media), 2);
+            }
+
+            nueva_desv = acDesviacion / (_randomValues.Length - 1);
+
+            return nueva_desv;
+        }
         //Restriccion de solo numeros a los textBox
         private void textBox_KeyPress(object sender, KeyPressEventArgs e)
         {
