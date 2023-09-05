@@ -33,7 +33,9 @@ namespace SIM_4K4_2023_G2_TP2
 
         private void btn_normal_Click(object sender, EventArgs e)
         {
+            NormalDistribution normalDistribution = new NormalDistribution();
 
+            normalDistribution.Show();
         }
     }
 }
