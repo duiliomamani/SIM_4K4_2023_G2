@@ -18,6 +18,8 @@ namespace SIM_4K4_2023_G2_TP2
         private double[] _randomValues;
         private (double LI, double LS, double FE, double FO)[] _intervalsValues;
         private int _n;
+        private double _media;
+        private double _desv;
         public NormalDistribution()
         {
             InitializeComponent();
@@ -40,8 +42,8 @@ namespace SIM_4K4_2023_G2_TP2
 
             Cursor.Current = Cursors.WaitCursor;
 
-            double _media = double.Parse(txt_media.Text, CultureInfo.InvariantCulture);
-            double _desv = double.Parse(txt_desv.Text, CultureInfo.InvariantCulture);
+            _media = double.Parse(txt_media.Text, CultureInfo.InvariantCulture);
+            _desv = double.Parse(txt_desv.Text, CultureInfo.InvariantCulture);
             _n = int.Parse(text_n.Text, CultureInfo.InvariantCulture);
 
             _randomValues = new double[_n];
@@ -102,9 +104,7 @@ namespace SIM_4K4_2023_G2_TP2
             //Calculo la amplitud
             double amplitude = (max - min) / _cIntervals;
 
-            //Calculo la frecuencia
-            double frecuency = _n / _cIntervals;
-
+           
             // Creación de los límites inferiores y superiores de los intervalos
             for (int i = 0; i < _cIntervals; i++)
             {
@@ -129,6 +129,10 @@ namespace SIM_4K4_2023_G2_TP2
                     _min = DoubleUtils.TruncateNumber(_dtIntervals[i - 1].LS + 0.0001d);
                     _max = DoubleUtils.TruncateNumber(_min + amplitude + 0.0001d);
                 }
+                //Calculo la frecuencia
+                double marca_clase = (_max + _min) / 2;
+
+                double frecuency = DoubleUtils.TruncateNumber((Math.Pow(Math.E, -0.5 * Math.Pow((marca_clase - _media) / _desv, 2)) / (_desv * Math.Sqrt(2 * Math.PI)))* _n );
 
                 //Defino las tuplas
                 _dtIntervals[i] = (LI: _min, LS: _max, FE: frecuency, FO: 0);

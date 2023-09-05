@@ -115,7 +115,9 @@ namespace SIM_4K4_2023_G2_TP2
                     _max = DoubleUtils.TruncateNumber(_min + amplitude + 0.0001d);
                 }
                 //Calculo la frecuencia
-                double frecuency = DoubleUtils.TruncateNumber((1 - (Math.Exp(-_lamba * _max)) - (1 - (Math.Exp(-_lamba * min)))) * _n);
+                double marca = (_max + _min) / 2;
+                double frecuency = (DoubleUtils.TruncateNumber((_lamba * (Math.Exp(-_lamba * marca)) * (_max - _min)) * _n));
+
                 //Defino las tuplas
                 _dtIntervals[i] = (LI: _min, LS: _max, FE: frecuency, FO: 0);
             }
@@ -137,13 +139,13 @@ namespace SIM_4K4_2023_G2_TP2
             var _dt_gridData = new DataTable();
             _dt_gridData.Columns.Add("LI");
             _dt_gridData.Columns.Add("LS");
-            //_dt_gridData.Columns.Add("FE");
+            _dt_gridData.Columns.Add("FE");
             _dt_gridData.Columns.Add("FO");
 
             //Seteo la vista de la tabla
             foreach (var data in _dtIntervals)
             {
-                _dt_gridData.Rows.Add(data.LI, data.LS, /*data.FE,*/ data.FO);
+                _dt_gridData.Rows.Add(data.LI, data.LS, data.FE, data.FO);
             }
 
             dt_gridData.DataSource = _dt_gridData;

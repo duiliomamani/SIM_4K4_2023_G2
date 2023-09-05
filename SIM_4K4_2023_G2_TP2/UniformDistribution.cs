@@ -130,13 +130,13 @@ namespace SIM_4K4_2023_G2_TP2
             var _dt_gridData = new DataTable();
             _dt_gridData.Columns.Add("LI");
             _dt_gridData.Columns.Add("LS");
-            //_dt_gridData.Columns.Add("FE");
+            _dt_gridData.Columns.Add("FE");
             _dt_gridData.Columns.Add("FO");
 
             //Seteo la vista de la tabla
             foreach (var data in _dtIntervals)
             {
-                _dt_gridData.Rows.Add(data.LI, data.LS/*, data.FE*/, data.FO);
+                _dt_gridData.Rows.Add(data.LI, data.LS, data.FE, data.FO);
             }
 
             dt_gridData.DataSource = _dt_gridData;
