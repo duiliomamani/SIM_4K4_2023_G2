@@ -4,11 +4,12 @@
     {
         public static double RandomNumber()
         {
-           return Random.Shared.NextDouble();
+            Random _rnd = new(Guid.NewGuid().GetHashCode());
+            return _rnd.NextDouble();
         }
         public static double TruncateNumber(double number)
         {
-            return Math.Truncate((double)number * 10000) / 10000;
+            return (double)Math.Truncate((decimal)number * 10000) / 10000.0d;
         }
     }
 }

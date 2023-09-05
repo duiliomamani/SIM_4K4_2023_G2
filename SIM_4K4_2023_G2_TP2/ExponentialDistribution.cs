@@ -18,6 +18,7 @@ namespace SIM_4K4_2023_G2_TP2
         private (double LI, double LS, double FE, double FO)[] _intervalsValues;
         private int _n;
         private double _lamba;
+
         public ExponentialDistribution()
         {
             InitializeComponent();
@@ -26,11 +27,11 @@ namespace SIM_4K4_2023_G2_TP2
         private DataTable generateDataTable()
         {
             //Generador de la dataTable
-            var _dt_gridUniformDistr = new DataTable();
-            _dt_gridUniformDistr.Columns.Add("n");
-            _dt_gridUniformDistr.Columns.Add("RND");
-            _dt_gridUniformDistr.Columns.Add("EXP()");
-            return _dt_gridUniformDistr;
+            var _dt_gridExpDistr = new DataTable();
+            _dt_gridExpDistr.Columns.Add("n");
+            _dt_gridExpDistr.Columns.Add("RND");
+            _dt_gridExpDistr.Columns.Add("EXP()");
+            return _dt_gridExpDistr;
         }
         private void generateListExpDistr()
         {
@@ -58,7 +59,7 @@ namespace SIM_4K4_2023_G2_TP2
                 //Calculo numero random
                 double _rnd = DoubleUtils.TruncateNumber(DoubleUtils.RandomNumber());
                 //Formula de la distribucion uniforme
-                double _value = DoubleUtils.TruncateNumber(-Math.Log(1 - _rnd) / _lamba);
+                double _value = DoubleUtils.TruncateNumber(-1 / _lamba * Math.Log(1 - _rnd));
 
                 //Agrego a la lista o tabla para mostrar
                 _dt_gridExpDistr.Rows.Add(i + 1, _rnd, _value);
@@ -105,7 +106,7 @@ namespace SIM_4K4_2023_G2_TP2
                 {
                     // Seteo el maximo y el anterior intervalo obtengo el limite superior
                     _min = DoubleUtils.TruncateNumber(_dtIntervals[i - 1].LS + 0.0001d);
-                    _max = max + 0.0001d;
+                    _max = DoubleUtils.TruncateNumber(max + 0.0001d);
                 }
                 else
                 {
@@ -114,7 +115,7 @@ namespace SIM_4K4_2023_G2_TP2
                     _max = DoubleUtils.TruncateNumber(_min + amplitude + 0.0001d);
                 }
                 //Calculo la frecuencia
-                double frecuency = DoubleUtils.TruncateNumber((1 - (Math.Exp(-_lamba*_max)) - (1 - (Math.Exp(-_lamba * min)))) * _n);
+                double frecuency = DoubleUtils.TruncateNumber((1 - (Math.Exp(-_lamba * _max)) - (1 - (Math.Exp(-_lamba * min)))) * _n);
                 //Defino las tuplas
                 _dtIntervals[i] = (LI: _min, LS: _max, FE: frecuency, FO: 0);
             }
@@ -150,17 +151,17 @@ namespace SIM_4K4_2023_G2_TP2
         //Restriccion de solo numeros a los textBox
         private void textBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) &&
-                (e.KeyChar != '.'))
-            {
+            if (!char.IsControl(e.KeyChar) && (!char.IsDigit(e.KeyChar))
+                    && (e.KeyChar != '.') && (e.KeyChar != '-'))
                 e.Handled = true;
-            }
 
-            //Solamente dejo que el . sea separador decimal
-            if ((e.KeyChar == '.') && ((sender as System.Windows.Forms.TextBox).Text.IndexOf('.') > -1))
-            {
+            // only allow one decimal point
+            if (e.KeyChar == '.' && (sender as TextBox).Text.IndexOf('.') > -1)
                 e.Handled = true;
-            }
+
+            // only allow minus sign at the beginning
+            if (e.KeyChar == '-' && (sender as TextBox).Text.Length > 0)
+                e.Handled = true;
         }
 
         #region Validations
@@ -176,7 +177,7 @@ namespace SIM_4K4_2023_G2_TP2
                 errorProviderApp.SetError(txt_lm, $"Lamba/Media no debe estar vacio.");
             }
             //Tipo de dato correcto
-            else if (!double.TryParse(txt_lm.Text, out _))
+            else if (!double.TryParse(txt_lm.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out _))
             {
                 e.Cancel = true;
                 txt_lm.Focus();

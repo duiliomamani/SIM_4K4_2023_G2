@@ -54,7 +54,7 @@ namespace SIM_4K4_2023_G2_TP2
                 double _value = DoubleUtils.TruncateNumber(_lower + _rnd * (_upper - _lower));
 
                 //Agrego a la lista o tabla para mostrar
-                _dt_gridUniformDistr.Rows.Add(i + 1, _rnd, _value);
+                _dt_gridUniformDistr.Rows.Add(i + 1, _rnd, _value.ToString("0.0000"));
 
                 //Lo guardo en un array o lista
                 _randomValues[i] = _value;
@@ -145,17 +145,17 @@ namespace SIM_4K4_2023_G2_TP2
         //Restriccion de solo numeros a los textBox
         private void textBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) &&
-                (e.KeyChar != '.'))
-            {
+            if (!char.IsControl(e.KeyChar) && (!char.IsDigit(e.KeyChar))
+                     && (e.KeyChar != '.') && (e.KeyChar != '-'))
                 e.Handled = true;
-            }
 
-            //Solamente dejo que el . sea separador decimal
-            if ((e.KeyChar == '.') && ((sender as System.Windows.Forms.TextBox).Text.IndexOf('.') > -1))
-            {
+            // only allow one decimal point
+            if (e.KeyChar == '.' && (sender as TextBox).Text.IndexOf('.') > -1)
                 e.Handled = true;
-            }
+
+            // only allow minus sign at the beginning
+            if (e.KeyChar == '-' && (sender as TextBox).Text.Length > 0)
+                e.Handled = true;
         }
         //Click boton generar
         private void btn_generationU_Click(object sender, EventArgs e)
@@ -189,7 +189,7 @@ namespace SIM_4K4_2023_G2_TP2
                 errorProviderApp.SetError(txt_lower, $"{lbl_lower.Text} no debe estar vacio.");
             }
             //Tipo de dato correcto
-            else if (!double.TryParse(txt_lower.Text, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out _))
+            else if (!double.TryParse(txt_lower.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out _))
             {
                 e.Cancel = true;
                 txt_lower.Focus();
@@ -219,7 +219,7 @@ namespace SIM_4K4_2023_G2_TP2
                 errorProviderApp.SetError(txt_upper, $"{lbl_upper.Text} no debe estar vacio.");
             }
             //Tipo de dato correcto
-            else if (!double.TryParse(txt_upper.Text, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out _))
+            else if (!double.TryParse(txt_upper.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out _))
             {
                 e.Cancel = true;
                 txt_upper.Focus();
