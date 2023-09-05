@@ -143,7 +143,7 @@ namespace SIM_4K4_2023_G2_TP2
         }
 
         //Restriccion de solo numeros a los textBox
-        private void TextBox_KeyPress(object sender, KeyPressEventArgs e)
+        private void textBox_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) &&
                 (e.KeyChar != '.'))
@@ -164,6 +164,17 @@ namespace SIM_4K4_2023_G2_TP2
             {
                 generateListUniformDistr();
             }
+        }
+        private void btn_draw_Click(object sender, EventArgs e)
+        {
+            Histogram _formHistogram = new Histogram(_intervalsValues);
+            //_formHistogram.intervalos_seleccionado = intervalos_seleccionado;
+            //formHistograma.serie_generada = serie_generada;
+            _formHistogram.Show();
+        }
+        private void btn_return_Click(object sender, EventArgs e)
+        {
+            Close();
         }
 
         #region Validations
@@ -267,17 +278,6 @@ namespace SIM_4K4_2023_G2_TP2
             }
         }
         #endregion
-        private void btn_draw_Click(object sender, EventArgs e)
-        {
-            Histogram _formHistogram = new Histogram(_intervalsValues);
-            //_formHistogram.intervalos_seleccionado = intervalos_seleccionado;
-            //formHistograma.serie_generada = serie_generada;
-            _formHistogram.Show();
-        }
 
-        private void btn_return_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
     }
 }

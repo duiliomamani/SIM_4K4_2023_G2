@@ -26,7 +26,9 @@ namespace SIM_4K4_2023_G2_TP2
 
         private void btn_exp_Click(object sender, EventArgs e)
         {
+            ExponentialDistribution expDistribution = new ExponentialDistribution();
 
+            expDistribution.Show();
         }
 
         private void btn_normal_Click(object sender, EventArgs e)

@@ -65,7 +65,7 @@
             txt_lower.Name = "txt_lower";
             txt_lower.Size = new Size(100, 23);
             txt_lower.TabIndex = 1;
-            txt_lower.KeyPress += TextBox_KeyPress;
+            txt_lower.KeyPress += textBox_KeyPress;
             txt_lower.Validating += txt_lower_Validating;
             // 
             // txt_upper
@@ -74,7 +74,7 @@
             txt_upper.Name = "txt_upper";
             txt_upper.Size = new Size(100, 23);
             txt_upper.TabIndex = 2;
-            txt_upper.KeyPress += TextBox_KeyPress;
+            txt_upper.KeyPress += textBox_KeyPress;
             txt_upper.Validating += txt_upper_Validating;
             // 
             // txt_n
@@ -83,7 +83,7 @@
             txt_n.Name = "txt_n";
             txt_n.Size = new Size(100, 23);
             txt_n.TabIndex = 3;
-            txt_n.KeyPress += TextBox_KeyPress;
+            txt_n.KeyPress += textBox_KeyPress;
             txt_n.Validating += txt_n_Validating;
             // 
             // lbl_lower
@@ -177,14 +177,12 @@
             // 
             // cmb_interval
             // 
-            cmb_interval.DisplayMember = "Seleccione";
             cmb_interval.FormattingEnabled = true;
             cmb_interval.Items.AddRange(new object[] { "10", "15", "20", "25" });
             cmb_interval.Location = new Point(158, 177);
             cmb_interval.Name = "cmb_interval";
             cmb_interval.Size = new Size(100, 23);
             cmb_interval.TabIndex = 12;
-            cmb_interval.ValueMember = "Seleccione";
             cmb_interval.Validating += cmb_interval_Validating;
             // 
             // btn_return
