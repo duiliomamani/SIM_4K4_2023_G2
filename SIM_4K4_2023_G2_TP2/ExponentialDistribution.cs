@@ -228,7 +228,7 @@ namespace SIM_4K4_2023_G2_TP2
             else
             {
                 e.Cancel = false;
-                errorProviderApp.SetError(txt_n, "");
+                errorProviderApp.SetError(cmb_interval, "");
             }
         }
         #endregion
