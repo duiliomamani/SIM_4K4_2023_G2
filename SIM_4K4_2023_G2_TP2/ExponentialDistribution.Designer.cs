@@ -157,6 +157,7 @@
             btn_return.TabIndex = 22;
             btn_return.Text = "Volver";
             btn_return.UseVisualStyleBackColor = true;
+            btn_return.Click += btn_return_Click;
             // 
             // btn_draw
             // 

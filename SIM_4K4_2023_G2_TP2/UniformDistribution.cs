@@ -99,14 +99,14 @@ namespace SIM_4K4_2023_G2_TP2
                 else if (i == (_cIntervals - 1))
                 {
                     // Seteo el maximo y el anterior intervalo obtengo el limite superior
-                    _min = DoubleUtils.TruncateNumber(_dtIntervals[i - 1].LS + 0.0001d);
-                    _max = max + 0.0001d;
+                    _min = DoubleUtils.TruncateNumber(_dtIntervals[i - 1].LS);
+                    _max = DoubleUtils.TruncateNumber(max + 0.0001d);
                 }
                 else
                 {
                     // Si es cualquier otro intervalo, suma el max anterior + ancho de los intervalos + 0.0001 (Para ajustar y tomar todos los valores).
-                    _min = DoubleUtils.TruncateNumber(_dtIntervals[i - 1].LS + 0.0001d);
-                    _max = DoubleUtils.TruncateNumber(_min + amplitude + 0.0001d);
+                    _min = DoubleUtils.TruncateNumber(_dtIntervals[i - 1].LS);
+                    _max = DoubleUtils.TruncateNumber(_min + amplitude);
                 }
 
                 //Defino las tuplas
