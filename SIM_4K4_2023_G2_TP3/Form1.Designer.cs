@@ -71,8 +71,10 @@
             dtg_prob.Location = new Point(322, 15);
             dtg_prob.Name = "dtg_prob";
             dtg_prob.RowTemplate.Height = 25;
-            dtg_prob.Size = new Size(214, 211);
+            dtg_prob.Size = new Size(440, 211);
             dtg_prob.TabIndex = 2;
+            dtg_prob.CellValidating += dtg_Validating;
+            dtg_prob.RowValidating += dtg_prob_RowValidating;
             // 
             // txt_i
             // 
@@ -148,7 +150,7 @@
             // 
             // btn_init
             // 
-            btn_init.Location = new Point(588, 18);
+            btn_init.Location = new Point(786, 18);
             btn_init.Name = "btn_init";
             btn_init.Size = new Size(200, 67);
             btn_init.TabIndex = 11;
@@ -160,7 +162,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 549);
+            ClientSize = new Size(1004, 549);
             Controls.Add(btn_init);
             Controls.Add(txt_c);
             Controls.Add(lbl_c);

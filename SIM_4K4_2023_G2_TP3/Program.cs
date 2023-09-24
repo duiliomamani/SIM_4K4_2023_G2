@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace SIM_4K4_2023_G2_TP3
 {
     internal static class Program
