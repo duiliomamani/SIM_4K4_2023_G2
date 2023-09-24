@@ -1,4 +1,7 @@
+using SIM_4K4_2023_G2_TP3.Logic;
 using SIM_4K4_2023_G2_TP3.Model;
+using SIM_4K4_2023_G2_TP3.Utils;
+using System.Data;
 using System.Globalization;
 using System.Windows.Forms;
 
@@ -153,15 +156,15 @@ namespace SIM_4K4_2023_G2_TP3
                     double ls;
                     if (i == 0)
                     {
-                        p_ac = Math.Round(_probabilites[i].probability, 2);
+                        p_ac = DoubleUtils.TruncateNumber(_probabilites[i].probability);
                         li = 0;
-                        ls = Math.Round(_probabilites[i].probability == 0 ? 0 : _probabilites[i].probability - 0.01d, 2);
+                        ls = DoubleUtils.TruncateNumber(_probabilites[i].probability == 0 ? 0 : _probabilites[i].probability - 0.01d);
                     }
                     else
                     {
-                        p_ac = Math.Round(_limits[i - 1].p_ac + _probabilites[i].probability, 2);
-                        li = Math.Round(_limits[i - 1].ls + 0.01d, 2);
-                        ls = Math.Round(p_ac - 0.01d, 2);
+                        p_ac = DoubleUtils.TruncateNumber(_limits[i - 1].p_ac + _probabilites[i].probability);
+                        li = DoubleUtils.TruncateNumber(_limits[i - 1].ls + 0.01d);
+                        ls = DoubleUtils.TruncateNumber(p_ac - 0.01d);
                     }
 
                     _limits.Add((_probabilites[i].passenger, _probabilites[i].probability, p_ac, li, ls));
@@ -170,9 +173,19 @@ namespace SIM_4K4_2023_G2_TP3
                     dtg_prob.Rows[i].Cells[3].Value = li.ToString(CultureInfo.InvariantCulture);
                     dtg_prob.Rows[i].Cells[4].Value = ls.ToString(CultureInfo.InvariantCulture);
                 }
+                int n = int.Parse(txt_n.Text, CultureInfo.InvariantCulture);
+                double utility = double.Parse(txt_u.Text, CultureInfo.InvariantCulture);
+                double cost = double.Parse(txt_c.Text, CultureInfo.InvariantCulture);
+                SimulacionMontecarlo _simulate = new(n, utility, cost, _limits);
 
+                int _i = int.Parse(txt_i.Text, CultureInfo.InvariantCulture);
+                int _j = int.Parse(txt_j.Text, CultureInfo.InvariantCulture);
 
+                dtg_results.DataSource = _simulate._montecarlo.AsEnumerable()
+                                .Skip(_i - 1)
+                                .Take(_j + 1).CopyToDataTable();
 
+                dtg_last_row.DataSource = _simulate._montecarlo.AsEnumerable().TakeLast(1).CopyToDataTable();
             }
         }
     }

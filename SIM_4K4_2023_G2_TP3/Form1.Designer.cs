@@ -42,8 +42,12 @@
             txt_c = new TextBox();
             errorProviderApp = new ErrorProvider(components);
             btn_init = new Button();
+            dtg_results = new DataGridView();
+            dtg_last_row = new DataGridView();
             ((System.ComponentModel.ISupportInitialize)dtg_prob).BeginInit();
             ((System.ComponentModel.ISupportInitialize)errorProviderApp).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dtg_results).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dtg_last_row).BeginInit();
             SuspendLayout();
             // 
             // lbl_n
@@ -158,11 +162,37 @@
             btn_init.UseVisualStyleBackColor = true;
             btn_init.Click += btn_init_Click;
             // 
+            // dtg_results
+            // 
+            dtg_results.AllowUserToAddRows = false;
+            dtg_results.AllowUserToDeleteRows = false;
+            dtg_results.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dtg_results.Location = new Point(21, 259);
+            dtg_results.Name = "dtg_results";
+            dtg_results.ReadOnly = true;
+            dtg_results.RowTemplate.Height = 25;
+            dtg_results.Size = new Size(960, 150);
+            dtg_results.TabIndex = 12;
+            // 
+            // dtg_last_row
+            // 
+            dtg_last_row.AllowUserToAddRows = false;
+            dtg_last_row.AllowUserToDeleteRows = false;
+            dtg_last_row.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dtg_last_row.Location = new Point(21, 455);
+            dtg_last_row.Name = "dtg_last_row";
+            dtg_last_row.ReadOnly = true;
+            dtg_last_row.RowTemplate.Height = 25;
+            dtg_last_row.Size = new Size(960, 64);
+            dtg_last_row.TabIndex = 13;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1004, 549);
+            Controls.Add(dtg_last_row);
+            Controls.Add(dtg_results);
             Controls.Add(btn_init);
             Controls.Add(txt_c);
             Controls.Add(lbl_c);
@@ -179,6 +209,8 @@
             Text = "TP3_Montecarlo";
             ((System.ComponentModel.ISupportInitialize)dtg_prob).EndInit();
             ((System.ComponentModel.ISupportInitialize)errorProviderApp).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dtg_results).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dtg_last_row).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -198,5 +230,7 @@
         private TextBox txt_c;
         private ErrorProvider errorProviderApp;
         private Button btn_init;
+        private DataGridView dtg_results;
+        private DataGridView dtg_last_row;
     }
 }

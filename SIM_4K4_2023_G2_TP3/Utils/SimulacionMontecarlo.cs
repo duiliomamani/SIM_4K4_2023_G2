@@ -1,30 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using SIM_4K4_2023_G2_TP3.Logic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SIM_4K4_2023_G2_TP3.Utils
 {
     internal class SimulacionMontecarlo
     {
-        Random random = new Random();
-        private int n;
-        public DataTable montecarlo;
-        private double utilidad;
-        private double costo;
-        DataTable pasajeros;
+        private int _n;
+        public DataTable _montecarlo;
+        private double _utility;
+        private double _cost;
+        IList<(int q_passenger, double probality, double p_ac, double li, double ls)> _limits;
 
-        public SimulacionMontecarlo(int n, double utilidad, double costo, DataTable pasajeros)
+        public SimulacionMontecarlo(int n, double utilidad, double costo, IList<(int q_passenger, double probality, double p_ac, double li, double ls)> limits)
         {
-            this.n = n;
-            this.utilidad = utilidad;
-            this.costo = costo;
-            this.pasajeros = pasajeros;
-            this.montecarlo = new DataTable();
+            _n = n;
+            _utility = utilidad;
+            _cost = costo;
+            _limits = limits;
+            _montecarlo = new DataTable();
 
-            generarTablaMontecarlo(montecarlo);
+            generarTablaMontecarlo(_montecarlo);
+            simular(_montecarlo);
         }
 
         private void generarTablaMontecarlo(DataTable montecarlo)
@@ -41,9 +37,9 @@ namespace SIM_4K4_2023_G2_TP3.Utils
         private void simular(DataTable montecarlo)
         {
             double promAnt = 0;
-            for (int i = 0; i < n; i++)
+            for (int i = 1; i <= _n; i++)
             {
-                double rnd = redondear(random.NextDouble());
+                double rnd = DoubleUtils.TruncateNumber(DoubleUtils.RandomNumber());
                 int _pasajeros = buscarPasajeros(rnd);
                 double _utilidad = calcularUtilidad(_pasajeros);
                 string sobreventa = existeSobreventa(_pasajeros);
@@ -51,27 +47,19 @@ namespace SIM_4K4_2023_G2_TP3.Utils
                 double _promedio = calcularPromedio(promAnt, i, _utilidadNeta);
                 promAnt = _promedio;
 
-
-                montecarlo.Rows.Add(i, rnd, _pasajeros,
-                    _utilidad,
-                    sobreventa,
-                    _utilidadNeta,
-                    _promedio);
-
-
-
+                montecarlo.Rows.Add(i, rnd, _pasajeros, _utilidad, sobreventa,_utilidadNeta, _promedio);
             }
         }
 
         private double calcularPromedio(double promAnt, int i, double utilidadNeta)
         {
-            double promedio = (promAnt * (i - 1) + utilidadNeta) / 1;
-            return promedio;
+            double promedio = (promAnt * (i - 1) + utilidadNeta) / i;
+            return DoubleUtils.TruncateNumber(promedio);
         }
 
         private double calcularUtilidad(int pasajeros)
         {
-            double utld = pasajeros * this.utilidad;
+            double utld = pasajeros * _utility;
 
             return utld;
         }
@@ -81,7 +69,7 @@ namespace SIM_4K4_2023_G2_TP3.Utils
             double utilidadNeta;
             if (pasajeros > 40)
             {
-                utilidadNeta = utilidad - (pasajeros - 40) * this.costo;
+                utilidadNeta = utilidad - (pasajeros - 40) * _cost;
             }
             else
             {
@@ -103,19 +91,16 @@ namespace SIM_4K4_2023_G2_TP3.Utils
 
         private int buscarPasajeros(double rnd)
         {
-            foreach (DataRow row in pasajeros.Rows)
+            foreach (var l in _limits)
             {
-                if (rnd >= double.Parse(row["intervalo desde"].ToString()) && rnd <= double.Parse(row["intervalo hasta"].ToString()))
+                if(rnd == 0.997)
                 {
-                    return int.Parse(row["Pasajeros"].ToString());
+
                 }
+                if (rnd >= l.li && rnd <= l.ls)
+                    return l.q_passenger;
             }
             return -1;
-        }
-
-        private double redondear(double value)
-        {
-            return Math.Truncate(value * 100) / 100;
         }
     }
 }
