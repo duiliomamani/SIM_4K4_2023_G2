@@ -107,7 +107,7 @@ namespace SIM_4K4_2023_G2_TP3.Utils
             {
                 if (rnd >= double.Parse(row["intervalo desde"].ToString()) && rnd <= double.Parse(row["intervalo hasta"].ToString()))
                 {
-                    return int.Parse(row["Autos vendidos"].ToString());
+                    return int.Parse(row["Pasajeros"].ToString());
                 }
             }
             return -1;
