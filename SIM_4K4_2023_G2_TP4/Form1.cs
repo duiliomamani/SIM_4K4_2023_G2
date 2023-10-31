@@ -12,6 +12,7 @@ namespace SIM_4K4_2023_G2_TP4
 {
     public partial class frmPrincipal : Form
     {
+        public int horaDesde;
         public frmPrincipal()
         {
             InitializeComponent();
@@ -19,7 +20,7 @@ namespace SIM_4K4_2023_G2_TP4
 
         private void frmPrincipal_Load(object sender, EventArgs e)
         {
-
+            horaDesde = int.Parse(txt_desde_hora.Text);
         }
     }
 }
