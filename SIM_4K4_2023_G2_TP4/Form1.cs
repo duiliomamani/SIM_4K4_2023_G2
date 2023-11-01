@@ -53,7 +53,7 @@ namespace SIM_4K4_2023_G2_TP4
                 _simulate.mostrarDatos();
 
                 dgv_state.Rows.Clear();
-                dgv_simulacion.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                dgv_simulacion.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
                 dgv_simulacion.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
                 dgv_simulacion.AllowUserToOrderColumns = false;
                 dgv_simulacion.DataSource = _simulate.dataTable;

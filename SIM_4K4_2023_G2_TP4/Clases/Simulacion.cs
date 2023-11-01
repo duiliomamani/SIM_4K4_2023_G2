@@ -16,21 +16,15 @@ namespace SIM_4K4_2023_G2_TP4.Clases
     internal class Simulacion
     {
         //private static int NUMERO_GRANDE = 999999999;
-        public DataTable dataTable;
-        public Relojero relojero = new Relojero();
-        public Ayudante ayudante = new Ayudante();
+        public DataTable dataTable = new DataTable();
         public frmPrincipal _frm;
         public int maximo_simulacion = 100000;
-        public int _i;
-        public int _j;
+        public int _i = 0;
+        public int _j = 0;
 
 
-        public List<List<Cliente>> clientes = new List<List<Cliente?>>();
+        public List<List<Cliente?>> clientes = new List<List<Cliente?>>();
         public List<dynamic> _iteracion = new List<dynamic>();
-        public double prox_fin_uso_instalacion = 0;
-        public Cliente prox_cliente_fin_uso_instalacion;
-        public int cantidad_iteracciones = 0;
-        public bool iteracciones_cumplidas = false;
 
         public Simulacion(frmPrincipal frm)
         {
@@ -77,6 +71,9 @@ namespace SIM_4K4_2023_G2_TP4.Clases
         public void mostrarDatos()
         {
             generar_dt();
+
+            _i = int.Parse(_frm.txt_desde_hora.Text);
+            _j = int.Parse(_frm.txt_iteracciones.Text);
 
             var iteraciones = maximo_simulacion == _j ? maximo_simulacion : _i + _j;
             for (int i = _i; i < iteraciones; i++)
@@ -229,9 +226,6 @@ namespace SIM_4K4_2023_G2_TP4.Clases
             else
                 _actual.ColaReparacion = _actual.ColaReparacion + 1;
         }
-
-
-
         private void determinarAccion(dynamic _actual)
         {
             obtenerAccion(_actual);
@@ -249,26 +243,6 @@ namespace SIM_4K4_2023_G2_TP4.Clases
             _actual.ColaAyudante = _actual.ColaAyudante != 0 ? _actual.ColaAyudante - 1 : 0;
         }
 
-        static ExpandoObject ShallowCopy(ExpandoObject original)
-        {
-            //var clone = new ExpandoObject();
-
-            //var _original = (IDictionary<string, object>)original;
-            //var _clone = (IDictionary<string, object>)clone;
-
-            //foreach (var kvp in _original)
-            //    _clone.Add(kvp);
-
-            dynamic clone = new ExpandoObject();
-            foreach (var kvp in (IDictionary<string, object>)original)
-            {
-                ((IDictionary<string, object>)clone).Add(kvp);
-            }
-
-
-            return clone;
-        }
-
         static ExpandoObject DeepCopy(ExpandoObject original)
         {
             var clone = new ExpandoObject();
@@ -281,8 +255,6 @@ namespace SIM_4K4_2023_G2_TP4.Clases
 
             return clone;
         }
-
-
         public void simular()
         {
             _iteracion.Clear();
@@ -351,14 +323,17 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                 {
                     if (_actual.EstadoAyudante == EstadosAyudante.Libre && _ant.ColaAyudante == 0)
                     {
-                        //_actual.ColaClientes = new List<Cliente?>();
-                        _actual.ColaClientes.Add(new Cliente() { estado = EstadosCliente.SiendoAtendido, hora_llegada = _actual.Reloj });
+                        _actual.ColaClientes = new List<Cliente?>() { new Cliente() { estado = EstadosCliente.SiendoAtendido, hora_llegada = _actual.Reloj } };
                         determinarAccion(_actual);
                     }
                     else
                     {
                         _actual.ColaAyudante++;
-                        _actual.ColaClientes = new List<Cliente?>(((List<Cliente>)_ant.ColaClientes).Select(x => x).ToList());
+                        _actual.ColaClientes = new List<Cliente?>();
+                        foreach (var c in (List<Cliente?>)_ant.ColaClientes)
+                        {
+                            _actual.ColaClientes.Add(new Cliente() { estado = c.estado, hora_llegada = c.hora_llegada });
+                        }
                         _actual.ColaClientes.Add(new Cliente() { estado = EstadosCliente.EsperandoAtencion, hora_llegada = _actual.Reloj });
                     }
 
@@ -369,7 +344,7 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                     if (_actual.Accion == AccionCliente.Retirar)
                     {
                         _actual.NoReparados = _actual.RelojesEnEspera == 0 ? true : false;
-                        _actual.Prob = ((_ant.Prob * _ant.i) + (_actual.NoReparados ? 1 : 0)) / _actual.i;
+                        _actual.Prob = DoubleUtils.TruncateNumber(((_ant.Prob * _ant.i) + (_actual.NoReparados ? 1 : 0)) / _actual.i);
                     }
                     else
                     {
@@ -421,7 +396,7 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                     if (_actual.Accion == AccionCliente.Retirar)
                     {
                         _actual.NoReparados = _actual.RelojesEnEspera == 0 ? true : false;
-                        _actual.Prob = ((_ant.Prob * _ant.i) + (_actual.NoReparados ? 1 : 0)) / _actual.i;
+                        _actual.Prob = DoubleUtils.TruncateNumber(((_ant.Prob * _ant.i) + (_actual.NoReparados ? 1 : 0)) / _actual.i);
                     }
                     else
                     {
