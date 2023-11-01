@@ -264,11 +264,18 @@
             dgv_simulacion.AllowUserToDeleteRows = false;
             dgv_simulacion.AllowUserToResizeColumns = false;
             dgv_simulacion.AllowUserToResizeRows = false;
+            dgv_simulacion.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.ColumnHeader;
+            dgv_simulacion.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgv_simulacion.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgv_simulacion.Location = new Point(14, 185);
             dgv_simulacion.Margin = new Padding(4, 3, 4, 3);
             dgv_simulacion.Name = "dgv_simulacion";
-            dgv_simulacion.Size = new Size(1587, 563);
+            dgv_simulacion.ReadOnly = true;
+            dgv_simulacion.ShowCellErrors = false;
+            dgv_simulacion.ShowCellToolTips = false;
+            dgv_simulacion.ShowEditingIcon = false;
+            dgv_simulacion.ShowRowErrors = false;
+            dgv_simulacion.Size = new Size(1600, 600);
             dgv_simulacion.TabIndex = 34;
             // 
             // label_titulo
@@ -463,7 +470,7 @@
             // 
             errorProviderApp.ContainerControl = this;
             // 
-            // progressBar1
+            // progressBar
             // 
             progressBar.Location = new Point(1401, 136);
             progressBar.Name = "progressBar";
@@ -474,7 +481,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1615, 763);
+            ClientSize = new Size(1624, 801);
             Controls.Add(progressBar);
             Controls.Add(finOrdenamiento);
             Controls.Add(label9);
@@ -513,7 +520,9 @@
             Controls.Add(dgv_simulacion);
             Margin = new Padding(4, 3, 4, 3);
             Name = "frmPrincipal";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "TP4 - Relojeria";
+            WindowState = FormWindowState.Maximized;
             Load += frmPrincipal_Load;
             ((System.ComponentModel.ISupportInitialize)dgv_simulacion).EndInit();
             ((System.ComponentModel.ISupportInitialize)errorProviderApp).EndInit();

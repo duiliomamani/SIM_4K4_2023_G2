@@ -25,7 +25,7 @@ namespace SIM_4K4_2023_G2_TP4
                 errorProviderApp.SetError((sender as MaskedTextBox), $"No debe estar vacio.");
             }
             //Tipo de dato correcto
-            else if ((!int.TryParse((sender as MaskedTextBox).Text, NumberStyles.Float, CultureInfo.InvariantCulture, out int n) || (n <= 0)))
+            else if ((!int.TryParse((sender as MaskedTextBox).Text, NumberStyles.Float, CultureInfo.InvariantCulture, out int n) || (n < 0)))
             {
                 (sender as MaskedTextBox).Focus();
                 errorProviderApp.SetError((sender as MaskedTextBox), $"Es de tipo incorrecto.");
@@ -44,6 +44,10 @@ namespace SIM_4K4_2023_G2_TP4
                 _simulate.simular();
                 _simulate.mostrarDatos();
 
+
+                dgv_simulacion.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                dgv_simulacion.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+                dgv_simulacion.AllowUserToOrderColumns = false;
                 dgv_simulacion.DataSource = _simulate.dataTable;
             }
         }
