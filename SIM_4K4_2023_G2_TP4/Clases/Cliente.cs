@@ -8,8 +8,7 @@ namespace SIM_4K4_2023_G2_TP4.Model
 {
     internal class Cliente
     {
-
         public string estado;
-        public string hora_llegada;
+        public double hora_llegada;
     }
 }

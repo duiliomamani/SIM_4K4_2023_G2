@@ -66,8 +66,10 @@
             finOrdenamiento = new MaskedTextBox();
             errorProviderApp = new ErrorProvider(components);
             progressBar = new ProgressBar();
+            dgv_state = new DataGridView();
             ((System.ComponentModel.ISupportInitialize)dgv_simulacion).BeginInit();
             ((System.ComponentModel.ISupportInitialize)errorProviderApp).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgv_state).BeginInit();
             SuspendLayout();
             // 
             // txt_iteracciones
@@ -267,7 +269,7 @@
             dgv_simulacion.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.ColumnHeader;
             dgv_simulacion.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgv_simulacion.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgv_simulacion.Location = new Point(14, 185);
+            dgv_simulacion.Location = new Point(13, 185);
             dgv_simulacion.Margin = new Padding(4, 3, 4, 3);
             dgv_simulacion.Name = "dgv_simulacion";
             dgv_simulacion.ReadOnly = true;
@@ -275,8 +277,9 @@
             dgv_simulacion.ShowCellToolTips = false;
             dgv_simulacion.ShowEditingIcon = false;
             dgv_simulacion.ShowRowErrors = false;
-            dgv_simulacion.Size = new Size(1600, 600);
+            dgv_simulacion.Size = new Size(1600, 453);
             dgv_simulacion.TabIndex = 34;
+            dgv_simulacion.SelectionChanged += dgv_simulacion_SelectionChanged;
             // 
             // label_titulo
             // 
@@ -477,11 +480,32 @@
             progressBar.Size = new Size(200, 23);
             progressBar.TabIndex = 65;
             // 
+            // dgv_state
+            // 
+            dgv_state.AllowUserToAddRows = false;
+            dgv_state.AllowUserToDeleteRows = false;
+            dgv_state.AllowUserToResizeColumns = false;
+            dgv_state.AllowUserToResizeRows = false;
+            dgv_state.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.ColumnHeader;
+            dgv_state.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dgv_state.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgv_state.Location = new Point(13, 658);
+            dgv_state.Margin = new Padding(4, 3, 4, 3);
+            dgv_state.Name = "dgv_state";
+            dgv_state.ReadOnly = true;
+            dgv_state.ShowCellErrors = false;
+            dgv_state.ShowCellToolTips = false;
+            dgv_state.ShowEditingIcon = false;
+            dgv_state.ShowRowErrors = false;
+            dgv_state.Size = new Size(1600, 233);
+            dgv_state.TabIndex = 66;
+            // 
             // frmPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1624, 801);
+            ClientSize = new Size(1624, 916);
+            Controls.Add(dgv_state);
             Controls.Add(progressBar);
             Controls.Add(finOrdenamiento);
             Controls.Add(label9);
@@ -526,6 +550,7 @@
             Load += frmPrincipal_Load;
             ((System.ComponentModel.ISupportInitialize)dgv_simulacion).EndInit();
             ((System.ComponentModel.ISupportInitialize)errorProviderApp).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgv_state).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -569,6 +594,7 @@
         public MaskedTextBox finOrdenamiento;
         private ErrorProvider errorProviderApp;
         public ProgressBar progressBar;
+        private DataGridView dgv_state;
     }
 }
 
