@@ -42,6 +42,9 @@ namespace SIM_4K4_2023_G2_TP4
             {
                 var _simulate = new Simulacion(this);
                 _simulate.simular();
+                _simulate.mostrarDatos();
+
+                dgv_simulacion.DataSource = _simulate.dataTable;
             }
         }
     }

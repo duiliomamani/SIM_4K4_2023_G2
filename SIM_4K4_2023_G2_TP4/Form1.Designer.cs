@@ -65,6 +65,7 @@
             label9 = new Label();
             finOrdenamiento = new MaskedTextBox();
             errorProviderApp = new ErrorProvider(components);
+            progressBar = new ProgressBar();
             ((System.ComponentModel.ISupportInitialize)dgv_simulacion).BeginInit();
             ((System.ComponentModel.ISupportInitialize)errorProviderApp).BeginInit();
             SuspendLayout();
@@ -240,7 +241,7 @@
             btn_simular.Location = new Point(1474, 44);
             btn_simular.Margin = new Padding(4, 3, 4, 3);
             btn_simular.Name = "btn_simular";
-            btn_simular.Size = new Size(127, 123);
+            btn_simular.Size = new Size(127, 72);
             btn_simular.TabIndex = 33;
             btn_simular.Text = "Simular";
             btn_simular.UseVisualStyleBackColor = true;
@@ -462,11 +463,19 @@
             // 
             errorProviderApp.ContainerControl = this;
             // 
+            // progressBar1
+            // 
+            progressBar.Location = new Point(1401, 136);
+            progressBar.Name = "progressBar";
+            progressBar.Size = new Size(200, 23);
+            progressBar.TabIndex = 65;
+            // 
             // frmPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1615, 763);
+            Controls.Add(progressBar);
             Controls.Add(finOrdenamiento);
             Controls.Add(label9);
             Controls.Add(label8);
@@ -550,6 +559,7 @@
         private Label label9;
         public MaskedTextBox finOrdenamiento;
         private ErrorProvider errorProviderApp;
+        public ProgressBar progressBar;
     }
 }
 
