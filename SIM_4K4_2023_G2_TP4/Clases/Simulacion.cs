@@ -6,6 +6,8 @@ using System.Data;
 using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
+using System.Runtime.Intrinsics.X86;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,7 +25,7 @@ namespace SIM_4K4_2023_G2_TP4.Clases
         public int _j;
 
 
-        public Queue<Cliente> clientes = new Queue<Cliente>();
+        public List<List<Cliente>> clientes = new List<List<Cliente?>>();
         public List<dynamic> _iteracion = new List<dynamic>();
         public double prox_fin_uso_instalacion = 0;
         public Cliente prox_cliente_fin_uso_instalacion;
@@ -241,15 +243,6 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                     break;
                 case AccionCliente.Entregar or AccionCliente.Retirar:
                     simularEntragaoRetiro(_actual);
-                    if (_actual.Accion == AccionCliente.Retirar)
-                    {
-                        _actual.NoReparados = _actual.RelojesEnEspera == 0 ? true : false;
-                        _actual.Prob = ((_actual._ant.Prob * _actual._ant.i) + (_actual.NoReparados ? 1 : 0)) / _actual.i;
-                    }
-                    else
-                    {
-                        _actual.NoReparados = null;
-                    }
                     break;
             }
 
@@ -258,29 +251,37 @@ namespace SIM_4K4_2023_G2_TP4.Clases
 
         static ExpandoObject ShallowCopy(ExpandoObject original)
         {
+            //var clone = new ExpandoObject();
+
+            //var _original = (IDictionary<string, object>)original;
+            //var _clone = (IDictionary<string, object>)clone;
+
+            //foreach (var kvp in _original)
+            //    _clone.Add(kvp);
+
+            dynamic clone = new ExpandoObject();
+            foreach (var kvp in (IDictionary<string, object>)original)
+            {
+                ((IDictionary<string, object>)clone).Add(kvp);
+            }
+
+
+            return clone;
+        }
+
+        static ExpandoObject DeepCopy(ExpandoObject original)
+        {
             var clone = new ExpandoObject();
 
             var _original = (IDictionary<string, object>)original;
             var _clone = (IDictionary<string, object>)clone;
 
             foreach (var kvp in _original)
-                _clone.Add(kvp);
+                _clone.Add(kvp.Key, kvp.Value is ExpandoObject ? DeepCopy((ExpandoObject)kvp.Value) : kvp.Value);
 
             return clone;
         }
 
-
-        private Queue<T> MergeQueues<T>(Queue<T> queue1, Queue<T> queue2)
-        {
-            // Sirve para juntar las dos colas
-            Queue<T> mergedQueue = new Queue<T>(queue1);
-            while (queue2.Count > 0)
-            {
-                mergedQueue.Enqueue(queue2.Dequeue());
-            }
-
-            return mergedQueue;
-        }
 
         public void simular()
         {
@@ -321,7 +322,10 @@ namespace SIM_4K4_2023_G2_TP4.Clases
             _dyc.PorOcuRelojero = 0;
             _dyc.NoReparados = null;
             _dyc.Prob = 0.0d;
-            _dyc.ColaClientes = new Queue<Cliente>();
+            _dyc.ColaClientes = new List<Cliente>();
+
+            clientes = new List<List<Cliente?>>();
+            clientes.Add(null);
 
             _iteracion.Add(_dyc);
             double _acumulador_tempo = 0;
@@ -330,9 +334,9 @@ namespace SIM_4K4_2023_G2_TP4.Clases
             {
                 var _ant = _iteracion[i - 1];
 
-                dynamic _actual = ShallowCopy(_ant);
+                dynamic _actual = DeepCopy(_ant);
 
-                _actual._ant = _ant;
+                //_actual._ant = _ant;
                 _actual.i = i;
 
                 var (Evento, Tiempo) = obtenerProximoEvento(new List<double?>() { _ant.ProxLlegada ?? null, _ant.FinAtencion ?? null, _ant.FinReparacion ?? null, _ant.FinOrdenado ?? null });
@@ -345,42 +349,68 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                 _actual.ProxLlegada = _ant.ProxLlegada;
                 if (Evento == Eventos.Llegada)
                 {
-                    if (_actual._ant.EstadoAyudante == EstadosAyudante.Libre && _ant.ColaAyudante == 0)
+                    if (_actual.EstadoAyudante == EstadosAyudante.Libre && _ant.ColaAyudante == 0)
                     {
-                        _actual.ColaClientes = new Queue<Cliente>();
-                        _actual.ColaClientes.Enqueue(new Cliente() { estado = EstadosCliente.SiendoAtendido, hora_llegada = _actual.Reloj });
+                        //_actual.ColaClientes = new List<Cliente?>();
+                        _actual.ColaClientes.Add(new Cliente() { estado = EstadosCliente.SiendoAtendido, hora_llegada = _actual.Reloj });
                         determinarAccion(_actual);
                     }
                     else
                     {
                         _actual.ColaAyudante++;
-
-                        _actual.ColaClientes = new Queue<Cliente>(_actual._ant.ColaClientes);
-                        _actual.ColaClientes.Enqueue(new Cliente() { estado = EstadosCliente.EsperandoAtencion, hora_llegada = _actual.Reloj });
+                        _actual.ColaClientes = new List<Cliente?>(((List<Cliente>)_ant.ColaClientes).Select(x => x).ToList());
+                        _actual.ColaClientes.Add(new Cliente() { estado = EstadosCliente.EsperandoAtencion, hora_llegada = _actual.Reloj });
                     }
 
                     _actual.RNDLlegada = DoubleUtils.TruncateNumber(DoubleUtils.RandomNumber());
                     _actual.TiempEntreLLegadas = calcularTempLlegada(_actual.RNDLlegada);
                     _actual.ProxLlegada = DoubleUtils.TruncateNumber(_actual.Reloj + _actual.TiempEntreLLegadas);
+
+                    if (_actual.Accion == AccionCliente.Retirar)
+                    {
+                        _actual.NoReparados = _actual.RelojesEnEspera == 0 ? true : false;
+                        _actual.Prob = ((_ant.Prob * _ant.i) + (_actual.NoReparados ? 1 : 0)) / _actual.i;
+                    }
+                    else
+                    {
+                        _actual.NoReparados = null;
+                    }
                 }
 
                 if (Evento == Eventos.FinDeAtencion)
                 {
-                    var q = _actual.ColaClientes.Dequeue();
 
                     if (_actual.ColaAyudante != 0)
                     {
                         determinarAccion(_actual);
-                        var aux = ((Queue<Cliente>)_actual.ColaClientes).ToList();
-                        aux[0].estado = EstadosCliente.SiendoAtendido;
 
-                        _actual.ColaClientes = new Queue<Cliente>(aux);
+                        var colaNueva = new List<Cliente?>(((List<Cliente?>)_actual.ColaClientes).Where(x => x.estado != EstadosCliente.SiendoAtendido).ToList());
+                        if (colaNueva.Count > 0)
+                        {
+                            _actual.ColaClientes = new List<Cliente?>();
+                            for (int o = 0; o < colaNueva.Count; o++)
+                            {
+                                Cliente c;
+                                if (o == 0)
+                                {
+                                    c = new Cliente() { estado = EstadosCliente.SiendoAtendido, hora_llegada = colaNueva[o].hora_llegada };
+                                }
+                                else
+                                {
+                                    c = new Cliente() { estado = EstadosCliente.EsperandoAtencion, hora_llegada = colaNueva[o].hora_llegada };
+                                }
+                                _actual.ColaClientes.Add(c);
+                            }
+                        }
                     }
                     else
                     {
                         _actual.OcupAyudante = DoubleUtils.TruncateNumber(_ant.OcupAyudante + _ant.TiempoAtencion);
                         _actual.PorOcupAyudante = DoubleUtils.TruncateNumber(_actual.OcupAyudante / _actual.Reloj * 100);
                         _actual.EstadoAyudante = EstadosAyudante.Libre;
+
+                        _actual.ColaClientes = new List<Cliente?>();
+
                         _actual.Accion = null;
                         _actual.RNDTiempoAtencion = null;
                         _actual.TiempoAtencion = null;
@@ -388,6 +418,15 @@ namespace SIM_4K4_2023_G2_TP4.Clases
 
                     }
 
+                    if (_actual.Accion == AccionCliente.Retirar)
+                    {
+                        _actual.NoReparados = _actual.RelojesEnEspera == 0 ? true : false;
+                        _actual.Prob = ((_ant.Prob * _ant.i) + (_actual.NoReparados ? 1 : 0)) / _actual.i;
+                    }
+                    else
+                    {
+                        _actual.NoReparados = null;
+                    }
 
                     if (_ant.Accion == AccionCliente.Entregar && _ant.ColaReparacion != 0)
                     {
@@ -426,7 +465,7 @@ namespace SIM_4K4_2023_G2_TP4.Clases
 
                     _actual.RelojesEnEspera = _actual.RelojesEnEspera + 1;
                 }
-
+                clientes.Add(_actual.ColaClientes);
                 _iteracion.Add(_actual);
             }
         }

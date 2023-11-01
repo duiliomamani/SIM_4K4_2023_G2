@@ -68,15 +68,16 @@ namespace SIM_4K4_2023_G2_TP4
                 DataGridViewRow row = gv.SelectedRows[0];
                 var i = Convert.ToInt32(row.Cells["i"].Value);
 
-                var _state_iteracion = _simulate._iteracion[i];
+                var _state_iteracion = _simulate.clientes[i];
                 i = 0;
 
                 dgv_state.Rows.Clear();
-                foreach (var s in _state_iteracion.ColaClientes)
-                {
-                    dgv_state.Rows.Add($"Cliente[{i}]", s.estado, s.hora_llegada);
-                    i++;
-                }
+                if (_state_iteracion != null)
+                    foreach (var s in _state_iteracion)
+                    {
+                        dgv_state.Rows.Add($"Cliente[{i}]", s.estado, s.hora_llegada);
+                        i++;
+                    }
             }
         }
     }
