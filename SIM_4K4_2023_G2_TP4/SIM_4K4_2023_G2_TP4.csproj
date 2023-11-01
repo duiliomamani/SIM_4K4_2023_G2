@@ -8,8 +8,4 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Form1.Designer.cs~RF52f26cb.TMP" />
-  </ItemGroup>
-
 </Project>
