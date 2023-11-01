@@ -372,6 +372,11 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                         _actual.OcupAyudante = DoubleUtils.TruncateNumber(_ant.OcupAyudante + _ant.TiempoAtencion);
                         _actual.PorOcupAyudante = DoubleUtils.TruncateNumber(_actual.OcupAyudante / _actual.Reloj * 100);
                         _actual.EstadoAyudante = EstadosAyudante.Libre;
+
+                        _actual.Accion = null;
+                        _actual.RNDTiempoAtencion = null;
+                        _actual.TiempoAtencion = null;
+                        _actual.FinAtencion = null;
                     }
 
                     if (_ant.Accion == AccionCliente.Entregar && _ant.ColaReparacion != 0)
@@ -381,11 +386,6 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                             simularReparacion(_actual);
                         }
                     }
-
-                    _actual.Accion = null;
-                    _actual.RNDTiempoAtencion = null;
-                    _actual.TiempoAtencion = null;
-                    _actual.FinAtencion = null;
                 }
 
                 if (Evento == Eventos.FinDeReparacion)
