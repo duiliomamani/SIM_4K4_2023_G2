@@ -269,7 +269,7 @@ namespace SIM_4K4_2023_G2_TP4.Clases
             return clone;
         }
 
-        
+
         private Queue<T> MergeQueues<T>(Queue<T> queue1, Queue<T> queue2)
         {
             // Sirve para juntar las dos colas
@@ -345,7 +345,7 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                 _actual.ProxLlegada = _ant.ProxLlegada;
                 if (Evento == Eventos.Llegada)
                 {
-                    if (_ant.EstadoAyudante == EstadosAyudante.Libre && _ant.ColaAyudante == 0)
+                    if (_actual._ant.EstadoAyudante == EstadosAyudante.Libre && _ant.ColaAyudante == 0)
                     {
                         _actual.ColaClientes = new Queue<Cliente>();
                         _actual.ColaClientes.Enqueue(new Cliente() { estado = EstadosCliente.SiendoAtendido, hora_llegada = _actual.Reloj });
@@ -354,7 +354,8 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                     else
                     {
                         _actual.ColaAyudante++;
-                        _actual.ColaClientes = new Queue<Cliente>(_ant.ColaClientes);
+
+                        _actual.ColaClientes = new Queue<Cliente>(_actual._ant.ColaClientes);
                         _actual.ColaClientes.Enqueue(new Cliente() { estado = EstadosCliente.EsperandoAtencion, hora_llegada = _actual.Reloj });
                     }
 
@@ -365,19 +366,28 @@ namespace SIM_4K4_2023_G2_TP4.Clases
 
                 if (Evento == Eventos.FinDeAtencion)
                 {
+                    var q = _actual.ColaClientes.Dequeue();
+
                     if (_actual.ColaAyudante != 0)
+                    {
                         determinarAccion(_actual);
+                        var aux = ((Queue<Cliente>)_actual.ColaClientes).ToList();
+                        aux[0].estado = EstadosCliente.SiendoAtendido;
+
+                        _actual.ColaClientes = new Queue<Cliente>(aux);
+                    }
                     else
                     {
                         _actual.OcupAyudante = DoubleUtils.TruncateNumber(_ant.OcupAyudante + _ant.TiempoAtencion);
                         _actual.PorOcupAyudante = DoubleUtils.TruncateNumber(_actual.OcupAyudante / _actual.Reloj * 100);
                         _actual.EstadoAyudante = EstadosAyudante.Libre;
-
                         _actual.Accion = null;
                         _actual.RNDTiempoAtencion = null;
                         _actual.TiempoAtencion = null;
                         _actual.FinAtencion = null;
+
                     }
+
 
                     if (_ant.Accion == AccionCliente.Entregar && _ant.ColaReparacion != 0)
                     {
