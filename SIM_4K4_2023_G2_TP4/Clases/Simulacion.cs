@@ -296,8 +296,10 @@ namespace SIM_4K4_2023_G2_TP4.Clases
             _dyc.Prob = 0.0d;
             _dyc.ColaClientes = new List<Cliente>();
 
-            clientes = new List<List<Cliente?>>();
-            clientes.Add(null);
+            clientes = new List<List<Cliente?>>
+            {
+                null
+            };
 
             _iteracion.Add(_dyc);
             double _acumulador_tempo = 0;
