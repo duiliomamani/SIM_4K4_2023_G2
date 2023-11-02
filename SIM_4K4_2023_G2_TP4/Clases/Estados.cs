@@ -14,8 +14,8 @@
 
     internal static class EstadosCliente
     {
-        public const string SiendoAtendido = "SiendoAtendido";
-        public const string EsperandoAtencion = "EsperandoAtencion";
+        public const string SiendoAtendido = "SA";
+        public const string EsperandoAtencion = "EA";
     }
     internal static class AccionCliente
     {

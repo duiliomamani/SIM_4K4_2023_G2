@@ -23,7 +23,7 @@ namespace SIM_4K4_2023_G2_TP4.Clases
         public int _j = 0;
 
 
-        public List<List<Cliente?>> clientes = new List<List<Cliente?>>();
+        //public List<List<Cliente?>> clientes = new List<List<Cliente?>>();
         public List<dynamic> _iteracion = new List<dynamic>();
 
         public Simulacion(frmPrincipal frm)
@@ -52,7 +52,7 @@ namespace SIM_4K4_2023_G2_TP4.Clases
             dataTable.Columns.Add("Fin atencion ayudante");
             dataTable.Columns.Add("RND reparacion");
             dataTable.Columns.Add("Tiempo Reparacion");
-            dataTable.Columns.Add("Tiempo Total c/Ordenado");
+            dataTable.Columns.Add("Tiempo Ordenado");
             dataTable.Columns.Add("Fin Reparacion");
             dataTable.Columns.Add("Fin Ordenado");
             dataTable.Columns.Add("Estado Ayudante");
@@ -64,8 +64,8 @@ namespace SIM_4K4_2023_G2_TP4.Clases
             dataTable.Columns.Add("%Ocup Ayudante");
             dataTable.Columns.Add("T Ocupación Relojero");
             dataTable.Columns.Add("%Ocup Relojero");
-            dataTable.Columns.Add("No reparados");
-            dataTable.Columns.Add("Prop");
+            dataTable.Columns.Add("Cant No reparados");
+            dataTable.Columns.Add("Prob");
         }
 
         public void mostrarDatos()
@@ -80,9 +80,8 @@ namespace SIM_4K4_2023_G2_TP4.Clases
             {
                 //Barra de progreso 
                 _frm.progressBar.Value = (int)(100 / double.Parse((iteraciones).ToString()) * (i + 1));
-
-                //_dyc.ColaClientes = new Queue<Cliente>();
-                dataTable.Rows.Add(_iteracion[i].i,
+                List<object> array = new List<object> {
+                    _iteracion[i].i,
                     _iteracion[i].Evento,
                     _iteracion[i].Reloj,
                     _iteracion[i].RNDLlegada ?? string.Empty,
@@ -107,9 +106,36 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                     _iteracion[i].PorOcupAyudante ?? string.Empty,
                     _iteracion[i].OcuRelojero ?? string.Empty,
                     _iteracion[i].PorOcuRelojero ?? string.Empty,
-                    _iteracion[i].NoReparados ?? string.Empty,
+                    _iteracion[i].CantNoReparados ?? string.Empty,
                     _iteracion[i].Prob ?? string.Empty
-                    );
+                };
+
+                foreach (var item in (List<Cliente?>)_iteracion[i].ColaClientes)
+                {
+                    var it = ((List<Cliente?>)_iteracion[i - 1].ColaClientes);
+
+                    if(((List<Cliente?>)_iteracion[i].ColaClientes).IndexOf(item) == 0)
+                    {
+                        for (int f = 0; f < item.i; f++)
+                        {
+                            array.Add(string.Empty);
+                        }
+                    }
+                    var haveEqualAnt = ((List<Cliente?>)_iteracion[i - 1].ColaClientes).Any(x => x.i == item.i);
+
+                    if (haveEqualAnt)
+                    {
+                        array.Add($"{item.estado} {item.hora_llegada}");
+                    }
+                    else
+                    {
+                        dataTable.Columns.Add($"Cliente {item.i}");
+                        array.Add($"{item.estado} - {item.hora_llegada}");
+
+                    }
+                }
+
+                dataTable.Rows.Add(array.ToArray());
             }
 
             dataTable.Rows.Add(_iteracion[maximo_simulacion - 1].i,
@@ -137,10 +163,9 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                     _iteracion[maximo_simulacion - 1].PorOcupAyudante ?? string.Empty,
                     _iteracion[maximo_simulacion - 1].OcuRelojero ?? string.Empty,
                     _iteracion[maximo_simulacion - 1].PorOcuRelojero ?? string.Empty,
-                    _iteracion[maximo_simulacion - 1].NoReparados ?? string.Empty,
+                    _iteracion[maximo_simulacion - 1].CantNoReparados ?? string.Empty,
                     _iteracion[maximo_simulacion - 1].Prob ?? string.Empty
                     );
-
         }
 
         private (string Evento, double? Tiempo) obtenerProximoEvento(List<double?> _tiempos)
@@ -201,9 +226,9 @@ namespace SIM_4K4_2023_G2_TP4.Clases
             double _rnd = DoubleUtils.TruncateNumber(DoubleUtils.RandomNumber());
             _actual.RNDReparacion = _rnd;
             _actual.TiempoReparacion = calcularFinReparacion(_rnd);
-            _actual.TiempoOrdenado = DoubleUtils.TruncateNumber(_actual.TiempoReparacion + int.Parse(_frm.finOrdenamiento.Text));
+            //_actual.TiempoOrdenado = DoubleUtils.TruncateNumber(_actual.TiempoReparacion + int.Parse(_frm.finOrdenamiento.Text));
             _actual.FinReparacion = DoubleUtils.TruncateNumber(_actual.Reloj + _actual.TiempoReparacion);
-            _actual.FinOrdenado = DoubleUtils.TruncateNumber(_actual.Reloj + _actual.TiempoOrdenado);
+            //_actual.FinOrdenado = DoubleUtils.TruncateNumber(_actual.Reloj + _actual.TiempoOrdenado);
             _actual.ColaReparacion = _actual.ColaReparacion >= 0 ? _actual.ColaReparacion - 1 : 0;
         }
         private void simularComprar(dynamic _actual)
@@ -293,13 +318,15 @@ namespace SIM_4K4_2023_G2_TP4.Clases
             _dyc.OcuRelojero = 0;
             _dyc.PorOcuRelojero = 0;
             _dyc.NoReparados = null;
+            _dyc.CantNoReparados = 0;
             _dyc.Prob = 0.0d;
             _dyc.ColaClientes = new List<Cliente>();
 
-            clientes = new List<List<Cliente?>>
-            {
-                null
-            };
+            int conClientes = 0;
+            //clientes = new List<List<Cliente?>>
+            //{
+            //    null
+            //};
 
             _iteracion.Add(_dyc);
             double _acumulador_tempo = 0;
@@ -325,7 +352,8 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                 {
                     if (_actual.EstadoAyudante == EstadosAyudante.Libre && _ant.ColaAyudante == 0)
                     {
-                        _actual.ColaClientes = new List<Cliente?>() { new Cliente() { estado = EstadosCliente.SiendoAtendido, hora_llegada = _actual.Reloj } };
+                        _actual.ColaClientes = new List<Cliente?>() { new Cliente() { i = conClientes, estado = EstadosCliente.SiendoAtendido, hora_llegada = _actual.Reloj } };
+                        conClientes++;
                         determinarAccion(_actual);
                     }
                     else
@@ -334,9 +362,10 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                         _actual.ColaClientes = new List<Cliente?>();
                         foreach (var c in (List<Cliente?>)_ant.ColaClientes)
                         {
-                            _actual.ColaClientes.Add(new Cliente() { estado = c.estado, hora_llegada = c.hora_llegada });
+                            _actual.ColaClientes.Add(new Cliente() { i = c.i, estado = c.estado, hora_llegada = c.hora_llegada });
                         }
-                        _actual.ColaClientes.Add(new Cliente() { estado = EstadosCliente.EsperandoAtencion, hora_llegada = _actual.Reloj });
+                        _actual.ColaClientes.Add(new Cliente() { i = conClientes, estado = EstadosCliente.EsperandoAtencion, hora_llegada = _actual.Reloj });
+                        conClientes++;
                     }
 
                     _actual.RNDLlegada = DoubleUtils.TruncateNumber(DoubleUtils.RandomNumber());
@@ -346,17 +375,15 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                     if (_actual.Accion == AccionCliente.Retirar)
                     {
                         _actual.NoReparados = _actual.RelojesEnEspera == 0 ? true : false;
+                        _actual.CantNoReparados += _actual.NoReparados ? 1 : 0;
                         _actual.Prob = DoubleUtils.TruncateNumber(((_ant.Prob * _ant.i) + (_actual.NoReparados ? 1 : 0)) / _actual.i);
                     }
                     else
-                    {
                         _actual.NoReparados = null;
-                    }
                 }
 
                 if (Evento == Eventos.FinDeAtencion)
                 {
-
                     if (_actual.ColaAyudante != 0)
                     {
                         determinarAccion(_actual);
@@ -370,11 +397,11 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                                 Cliente c;
                                 if (o == 0)
                                 {
-                                    c = new Cliente() { estado = EstadosCliente.SiendoAtendido, hora_llegada = colaNueva[o].hora_llegada };
+                                    c = new Cliente() { i = colaNueva[o].i, estado = EstadosCliente.SiendoAtendido, hora_llegada = colaNueva[o].hora_llegada };
                                 }
                                 else
                                 {
-                                    c = new Cliente() { estado = EstadosCliente.EsperandoAtencion, hora_llegada = colaNueva[o].hora_llegada };
+                                    c = new Cliente() { i = colaNueva[o].i, estado = EstadosCliente.EsperandoAtencion, hora_llegada = colaNueva[o].hora_llegada };
                                 }
                                 _actual.ColaClientes.Add(c);
                             }
@@ -398,12 +425,11 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                     if (_actual.Accion == AccionCliente.Retirar)
                     {
                         _actual.NoReparados = _actual.RelojesEnEspera == 0 ? true : false;
+                        _actual.CantNoReparados += _actual.NoReparados ? 1 : 0;
                         _actual.Prob = DoubleUtils.TruncateNumber(((_ant.Prob * _ant.i) + (_actual.NoReparados ? 1 : 0)) / _actual.i);
                     }
                     else
-                    {
                         _actual.NoReparados = null;
-                    }
 
                     if (_ant.Accion == AccionCliente.Entregar && _ant.ColaReparacion != 0)
                     {
@@ -417,7 +443,11 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                 if (Evento == Eventos.FinDeReparacion)
                 {
                     if (_ant.EstadoRelojero == EstadosRelojero.Reparando)
+                    {
                         _actual.EstadoRelojero = EstadosRelojero.Ordenando;
+                        _actual.TiempoOrdenado = DoubleUtils.TruncateNumber(_ant.TiempoReparacion + int.Parse(_frm.finOrdenamiento.Text));
+                        _actual.FinOrdenado = DoubleUtils.TruncateNumber(_actual.Reloj + int.Parse(_frm.finOrdenamiento.Text));
+                    }
 
                     _actual.RNDReparacion = null;
                     _actual.TiempoReparacion = null;
@@ -429,20 +459,21 @@ namespace SIM_4K4_2023_G2_TP4.Clases
 
                     if (_ant.ColaReparacion != 0)
                     {
+                        _actual.RelojesEnEspera = _actual.RelojesEnEspera + 1;
                         simularReparacion(_actual);
                     }
-                    else
+                    else if (_ant.EstadoRelojero == EstadosRelojero.Ordenando)
                     {
                         _actual.EstadoRelojero = EstadosRelojero.Libre;
                         _actual.OcuRelojero = DoubleUtils.TruncateNumber(_ant.OcuRelojero + _acumulador_tempo);
                         _actual.PorOcuRelojero = DoubleUtils.TruncateNumber(_actual.OcuRelojero / _actual.Reloj * 100);
                         _acumulador_tempo = 0;
-                        _actual.FinOrdenado = null;
                     }
 
-                    _actual.RelojesEnEspera = _actual.RelojesEnEspera + 1;
+                    _actual.TiempoOrdenado = null;
+                    _actual.FinOrdenado = null;
                 }
-                clientes.Add(_actual.ColaClientes);
+                //clientes.Add(_actual.ColaClientes);
                 _iteracion.Add(_actual);
             }
         }

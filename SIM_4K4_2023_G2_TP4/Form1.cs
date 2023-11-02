@@ -16,13 +16,14 @@ namespace SIM_4K4_2023_G2_TP4
         {
             _simulate = new Simulacion(this);
 
-            dgv_state.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgv_state.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dgv_state.AllowUserToOrderColumns = false;
+            //dgv_state.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            //dgv_state.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            //dgv_state.AllowUserToOrderColumns = false;
+            //dgv_state.Font = new Font("Segoe UI", 14);
 
-            dgv_state.Columns.Add("Objeto[i]", "Objeto[i]");
-            dgv_state.Columns.Add("Estado", "Estado");
-            dgv_state.Columns.Add("Hora", "Hora");
+            //dgv_state.Columns.Add("Objeto[i]", "Objeto[i]");
+            //dgv_state.Columns.Add("Estado", "Estado");
+            //dgv_state.Columns.Add("Hora", "Hora");
         }
 
         private void txt_number_Validating(object sender, System.ComponentModel.CancelEventArgs e)
@@ -52,33 +53,33 @@ namespace SIM_4K4_2023_G2_TP4
                 _simulate.simular();
                 _simulate.mostrarDatos();
 
-                dgv_state.Rows.Clear();
                 dgv_simulacion.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
                 dgv_simulacion.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
                 dgv_simulacion.AllowUserToOrderColumns = false;
+                dgv_simulacion.Font = new Font("Segoe UI", 14);
                 dgv_simulacion.DataSource = _simulate.dataTable;
             }
         }
 
         private void dgv_simulacion_SelectionChanged(object sender, EventArgs e)
         {
-            DataGridView gv = sender as DataGridView;
-            if (gv != null && gv.SelectedRows.Count > 0)
-            {
-                DataGridViewRow row = gv.SelectedRows[0];
-                var i = Convert.ToInt32(row.Cells["i"].Value);
+            //DataGridView gv = sender as DataGridView;
+            //if (gv != null && gv.SelectedRows.Count > 0)
+            //{
+            //    DataGridViewRow row = gv.SelectedRows[0];
+            //    var i = Convert.ToInt32(row.Cells["i"].Value);
 
-                var _state_iteracion = _simulate.clientes[i];
-                i = 0;
+            //    var _state_iteracion = _simulate.clientes[i];
+            //    i = 0;
 
-                dgv_state.Rows.Clear();
-                if (_state_iteracion != null)
-                    foreach (var s in _state_iteracion)
-                    {
-                        dgv_state.Rows.Add($"Cliente[{i}]", s.estado, s.hora_llegada);
-                        i++;
-                    }
-            }
+            //    dgv_state.Rows.Clear();
+            //    if (_state_iteracion != null)
+            //        foreach (var s in _state_iteracion)
+            //        {
+            //            dgv_state.Rows.Add($"Cliente[{i}]", s.estado, s.hora_llegada);
+            //            i++;
+            //        }
+            //}
         }
     }
 }
