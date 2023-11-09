@@ -275,7 +275,7 @@
             dgv_simulacion.ShowCellToolTips = false;
             dgv_simulacion.ShowEditingIcon = false;
             dgv_simulacion.ShowRowErrors = false;
-            dgv_simulacion.Size = new Size(1598, 599);
+            dgv_simulacion.Size = new Size(1598, 499);
             dgv_simulacion.TabIndex = 34;
             dgv_simulacion.SelectionChanged += dgv_simulacion_SelectionChanged;
             // 

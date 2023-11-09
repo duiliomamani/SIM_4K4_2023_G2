@@ -114,7 +114,7 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                 {
                     var it = ((List<Cliente?>)_iteracion[i - 1].ColaClientes);
 
-                    if(((List<Cliente?>)_iteracion[i].ColaClientes).IndexOf(item) == 0)
+                    if (((List<Cliente?>)_iteracion[i].ColaClientes).IndexOf(item) == 0)
                     {
                         for (int f = 0; f < item.i; f++)
                         {
@@ -330,6 +330,7 @@ namespace SIM_4K4_2023_G2_TP4.Clases
 
             _iteracion.Add(_dyc);
             double _acumulador_tempo = 0;
+            double _acumulador_tempo_ayu = 0;
 
             for (int i = 1; i < maximo_simulacion; i++)
             {
@@ -348,6 +349,9 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                 _actual.RNDLlegada = _ant.RNDLlegada;
                 _actual.TiempEntreLLegadas = _ant.TiempEntreLLegadas;
                 _actual.ProxLlegada = _ant.ProxLlegada;
+
+
+
                 if (Evento == Eventos.Llegada)
                 {
                     if (_actual.EstadoAyudante == EstadosAyudante.Libre && _ant.ColaAyudante == 0)
@@ -381,7 +385,6 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                     else
                         _actual.NoReparados = null;
                 }
-
                 if (Evento == Eventos.FinDeAtencion)
                 {
                     if (_actual.ColaAyudante != 0)
@@ -409,17 +412,13 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                     }
                     else
                     {
-                        _actual.OcupAyudante = DoubleUtils.TruncateNumber(_ant.OcupAyudante + _ant.TiempoAtencion);
-                        _actual.PorOcupAyudante = DoubleUtils.TruncateNumber(_actual.OcupAyudante / _actual.Reloj * 100);
                         _actual.EstadoAyudante = EstadosAyudante.Libre;
-
                         _actual.ColaClientes = new List<Cliente?>();
 
                         _actual.Accion = null;
                         _actual.RNDTiempoAtencion = null;
                         _actual.TiempoAtencion = null;
                         _actual.FinAtencion = null;
-
                     }
 
                     if (_actual.Accion == AccionCliente.Retirar)
@@ -439,7 +438,6 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                         }
                     }
                 }
-
                 if (Evento == Eventos.FinDeReparacion)
                 {
                     if (_ant.EstadoRelojero == EstadosRelojero.Reparando)
@@ -455,8 +453,6 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                 }
                 if (Evento == Eventos.FinDeOrdenamiento)
                 {
-                    _acumulador_tempo += _ant.TiempoOrdenado;
-
                     if (_ant.ColaReparacion != 0)
                     {
                         _actual.RelojesEnEspera = _actual.RelojesEnEspera + 1;
@@ -465,15 +461,27 @@ namespace SIM_4K4_2023_G2_TP4.Clases
                     else if (_ant.EstadoRelojero == EstadosRelojero.Ordenando)
                     {
                         _actual.EstadoRelojero = EstadosRelojero.Libre;
-                        _actual.OcuRelojero = DoubleUtils.TruncateNumber(_ant.OcuRelojero + _acumulador_tempo);
-                        _actual.PorOcuRelojero = DoubleUtils.TruncateNumber(_actual.OcuRelojero / _actual.Reloj * 100);
-                        _acumulador_tempo = 0;
                     }
 
                     _actual.TiempoOrdenado = null;
                     _actual.FinOrdenado = null;
                 }
-                //clientes.Add(_actual.ColaClientes);
+
+
+                if (_ant.EstadoAyudante == EstadosAyudante.Ocupado)
+                {
+                    _acumulador_tempo_ayu += (_actual.Reloj - _ant.Reloj);
+                }
+
+                if (_ant.EstadoRelojero == EstadosRelojero.Ordenando || _ant.EstadoRelojero == EstadosRelojero.Reparando)
+                {
+                    _acumulador_tempo += (_actual.Reloj - _ant.Reloj);
+                }
+                _actual.PorOcupAyudante = DoubleUtils.TruncateNumber((_acumulador_tempo_ayu / _actual.Reloj) * 100);
+                _actual.OcupAyudante = DoubleUtils.TruncateNumber(_acumulador_tempo_ayu);
+                _actual.PorOcuRelojero = DoubleUtils.TruncateNumber((_acumulador_tempo / _actual.Reloj) * 100);
+                _actual.OcuRelojero = DoubleUtils.TruncateNumber(_acumulador_tempo);
+
                 _iteracion.Add(_actual);
             }
         }
